@@ -11,25 +11,19 @@
 int main(void)
 {
     /* Replace with your application code */
-	DDRA = 0x00; PORTA = 0xFF;
-	DDRB = 0xFF; PORTB = 0x00;
+	DDRA = 0x00; PORTA = 0x00;
+	DDRB = 0x00; PORTB = 0x00;
 	
-	unsigned char tmpB = 0x00;
-	unsigned char tmpA = 0x00;
+	unsigned char garage_sensor = 0x00;
+	unsigned char light_sensor = 0x00;
 	
     while (1) 
     {
-		tmpA = PINA & 0x01;
+		garage_sensor = PINA0;
+		light_sensor = PINA1;
 		
-		if(tmpA == 0x01){
-			tmpB = (tmpB & 0xFC) | 0x01;
-			
-		}else{
-			tmpB = (tmpB & 0xFC) | 0x02;
-			
-		}
+		PORTB = ~garage_sensor & light_sensor; 	
 		
-		PORTB = tmpB;
 		
     }
 	return 0;
