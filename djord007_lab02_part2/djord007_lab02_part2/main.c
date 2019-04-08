@@ -21,7 +21,7 @@ int main(void)
     {
 		total = (PINA & 0x01) + (PINA >> 1 & 0x01) + (PINA >> 2 & 0x01) + (PINA >> 3 & 0x01);
 	  
-		PORTC = total; 
+		PORTC = (4 - total) & 0x03; 
 
 
     }
