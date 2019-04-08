@@ -24,7 +24,7 @@ int main(void)
     /* Replace with your application code */
     while (1) 
     {
-		weight_a = PINA; 
+		weight_a = PINA;
 		weight_b = PINB; 
 		weight_c = PINC;
 
