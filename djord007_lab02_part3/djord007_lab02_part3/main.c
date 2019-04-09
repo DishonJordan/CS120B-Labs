@@ -23,7 +23,7 @@ int main(void)
 	{
 		total = (PINA & 0x01) + (PINA >> 1 & 0x01) + (PINA >> 2 & 0x01) + (PINA >> 3 & 0x01);
 		
-		total = (PINA == 0x0F)? 0x84 : total;
+		total = ((PINA & 0x0F) == 0x0F) ? 0x80 : 4 - total;
 
 		PORTC = total;
 
