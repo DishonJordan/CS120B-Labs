@@ -1,3 +1,4 @@
+    
 /*	Partner 1 Name & E-mail: Dishon Jordan djord007@ucr.edu
 *	Partner 2 Name & E-mail: Travis Nasser tnass001@ucr.edu
  *	Lab Section: 025
@@ -23,20 +24,17 @@ int main(void)
 {
 	DDRA = 0x00; PORTA = 0xFF;
 	DDRB = 0xFF; PORTB = 0x00;
+	DDRC = 0xFF; PORTC = 0x00;
 
-	unsigned char i, j, p, q;
+	unsigned char temp_b = 0x00, temp_c = 0x00;
 	while(1) {
-		i = 0, j = 4;
-		p = 7, q = 3;
-		while(i < 4 && j < 8){
-			/* copy upper bits */
-			PORTB = SetBit(PORTB, j, GetBit(PINA, i));
-			i++; j++;
-			
-			/* copy lower bits */
-			PORTB = SetBit(PORTB, q, GetBit(PINA, p));
-			p--; q--;
-		}
+		temp_b = PINA >> 4;
+		temp_c = PINA << 4;
+
+		PORTB = temp_b;
+		PORTC = temp_c;
+
+
 	}
 	return 0;
 }
