@@ -10,7 +10,7 @@
 
 #include <avr/io.h>
 
-enum Lock_States{ Lock_Start, Lock_Combo1, Lock_Combo2, Lock_Unlock}Current_State;
+enum Lock_States{ Lock_Start, EnterPound, WaitForY, EnterY, Lock_Unlock}Current_State;
 	unsigned char lock_status = 0x01;
 	unsigned char x_button = 0x00;
 	unsigned char y_button = 0x00;
@@ -21,35 +21,32 @@ enum Lock_States{ Lock_Start, Lock_Combo1, Lock_Combo2, Lock_Unlock}Current_Stat
 void LockSM(){
 		switch(Current_State){//Transition Controller
 		case Lock_Start:
-			Current_State =  (pound_button && !x_button && !y_button)? Lock_Combo1 : Lock_Start;
-			break;
-		case Lock_Combo1:
+			Current_State = (pound_button && !x_button && !y_button)? EnterPound : Lock_Start;
+		break;
+		case EnterPound:
 			if(x_button || y_button){
 				Current_State = Lock_Start;
-			}else if(!pound_button){
-				Current_State = Lock_Combo2;
+			}else if(pound_button){
+				Current_State = EnterPound;
 			}else{
-				Current_State = Lock_Combo1;
+				Current_State = WaitForY;
 			}
-
 		break;
-		case Lock_Combo2:
+		case WaitForY:
 			if(pound_button || x_button){
 				Current_State = Lock_Start;
-			}else if(y_button){
-				Current_State = Lock_Unlock;
+			}else if( y_button){
+				Current_State = EnterY;
 			}else{
-				Current_State = Lock_Combo2;
+				Current_State = WaitForY;
 			}
-
+		break;
+		case EnterY:
+			Current_State = y_button? EnterY: Lock_Unlock;
 
 		break;
 		case Lock_Unlock:
-			if(inside_button){
-				Current_State = Lock_Start;
-			}else{
-				Current_State = Lock_Unlock;
-			}
+			Current_State = inside_button? Lock_Start : Lock_Unlock;
 		break;
 		default:
 		break;
@@ -59,19 +56,23 @@ void LockSM(){
 		case Lock_Start:
 			lock_status = 0x01;
 			c_state_debug = 0x00;
-			break;
-		case Lock_Combo1:
-			lock_status = 0x01;
-			c_state_debug = 0x01;
-			break;
-		case Lock_Combo2:
+		break;
+		case EnterPound:
 			lock_status = 0x01;
 			c_state_debug = 0x02;
-			break;
+		break;
+		case WaitForY:
+			lock_status = 0x01;
+			c_state_debug = 0x04;
+		break;
+		case EnterY:
+			lock_status = 0x00;
+			c_state_debug = 0x08;
+		break;
 		case Lock_Unlock:
 			lock_status = 0x00;
-			c_state_debug = 0x04;
-			break;
+			c_state_debug = 0x10;
+		break;
 		default:
 			c_state_debug = 0xFF;
 		break;
