@@ -10,7 +10,7 @@
 
     #include <avr/io.h>
 
-    enum Lock_States{ Lock_Start, CheckButton, WaitButtonRelease, Lock_Unlock}Current_State;
+    enum Lock_States{ Lock_Start, CheckButton, Lock_Unlock}Current_State;
     unsigned char lock_status = 0x01;
     unsigned char x_button = 0x00;
     unsigned char y_button = 0x00;
@@ -28,28 +28,23 @@
 			case CheckButton:
 				switch(count){
 					case 0:
-						Current_State = (pound_button && !x_button && !y_button)? WaitButtonRelease : Lock_Start;
+						Current_State = (pound_button && !x_button && !y_button)? CheckButton : Lock_Start;
 					break;
 					case 1:
-						Current_State = (!pound_button && x_button && !y_button)? WaitButtonRelease : Lock_Start;
+						Current_State = (!pound_button && x_button && !y_button)? CheckButton : Lock_Start;
 					break;
 					case 2:
-						Current_State = (!pound_button && !x_button && y_button)? WaitButtonRelease : Lock_Start;
+						Current_State = (!pound_button && !x_button && y_button)? CheckButton : Lock_Start;
 					break;
 					case 3:
-						Current_State = (!pound_button && x_button && !y_button)? WaitButtonRelease : Lock_Start;
+						Current_State = (!pound_button && x_button && !y_button)? CheckButton : Lock_Start;
 					break;
+					case 4:
+						Current_State = Lock_Unlock;
 					default:
 					break;
 				}
-			break;
-			case WaitButtonRelease:
 				count++;
-				if(count == 4){
-					Current_State = Lock_Unlock;
-				}else{
-				Current_State = (!pound_button && !x_button && !y_button)? CheckButton : Lock_Start;
-				}
 			break;
 			case Lock_Unlock:
 				Current_State = y_button? Lock_Unlock : Lock_Start;
@@ -68,11 +63,6 @@
 			case CheckButton:	
 			lock_status = 0x01;
 			c_state_debug = 0x01;		
-			break;
-			case WaitButtonRelease:
-			count++;
-			lock_status = 0x01;
-			c_state_debug = 0x02;
 			break;
 			case Lock_Unlock:
 			lock_status = 0x00;
