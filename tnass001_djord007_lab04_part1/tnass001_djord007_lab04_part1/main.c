@@ -9,56 +9,72 @@
  */
 #include <avr/io.h>
 	
-enum States {LEDStart, LED1, LED2} LEDState ;
+enum States {LEDStart, Wait1, Wait2, LED1, LED2} LEDState ;
 		
 void TickFct_Latch() {
 		switch(LEDState) {
 			case LEDStart:
-			LEDState = LED1;
-			break;
-
+				LEDState = LED1;
+				break;
+				
 			case LED1:
-			if ((PINA & 0x01) == 0x01) {
-				LEDState = LED2;
-			}
-			else if ((PINA & 0x00) == 0x00) {
-				LEDState = LED1;
-			}
-			break;
-			
+				if ((PINA & 0x01) == 0x01) {
+					LEDState = LED1;
+				}
+				else if ((PINA & 0x01) == 0x00) {
+					LEDState = Wait1;
+				}
+				break;
+				
 			case LED2:
-			if ((PINA & 0x01) == 0x01) {
-				LEDState = LED2;
-			}
-			else if ((PINA & 0x00) == 0x00) {
-				LEDState = LED1;
-			}
-			break;
-			
+				if ((PINA & 0x01) == 0x01) {
+					LEDState = LED2;
+				}
+				else if ((PINA & 0x01) == 0x00) {
+					LEDState = Wait2;
+				}
+				break;
+				
+			case Wait1:
+				if ((PINA & 0x01) == 0x01) {
+					LEDState = LED2;
+				}
+				else if ((PINA & 0x01) == 0x00) {
+					LEDState = Wait1;
+				}
+				break;
+				
+			case Wait2:
+				if ((PINA & 0x01) == 0x01) {
+					LEDState = LED1;
+				}
+				else if ((PINA & 0x01) == 0x00) {
+					LEDState = Wait2;
+				}
+				break;
+				
 			default:
-			LEDState = LEDStart;
-			break;
-			
+				break;
 		}
 		
 		switch(LEDState) {
 			case LED1:
-			PORTB = 0x01;
-			break;
+				PORTB = 0x01;
+				break;
 			
 			case LED2:
-			PORTB = 0x02;
-			break;
+				PORTB = 0x02;
+				break;
 			
 			default:
-			break;
+				break;
 		}
 }
 
 int main(void)
 {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRB = 0xFF; PORTB = 0x00;
+	DDRB = 0xFF; PORTB = 0x01;
 	LEDState = LEDStart;
 	
 	while(1) {

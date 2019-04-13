@@ -7,47 +7,43 @@
 
 #include <avr/io.h>
 
-enum States {Init, Start, Increment, Decrement, Reset} State;
+enum States {Init, Increment, Decrement, Reset} State;
 
 void tick() {
-	switch(State) {
+	switch(State) {			
 		case Init:
-			State = Start;
-			break;
-			
-		case Start:
-			PORTC = 0x07;
-			if ((PINA & 0x01) == 0x01) {
+			if ((PINA & 0x03) == 0x02) {
 				State = Decrement;
 			}
-			else if ((PINA & 0x00) == 0x00) {
+			else if ((PINA & 0x03) == 0x01) {
 				State = Increment;
+			}
+			else if ((PINA & 0x03) == 0x03) {
+				State = Reset;
 			}
 			break;
 			
 		case Increment:
-			if (PORTC > 9) {
-				break;
-			}
-			PORTC += 0x01;
-			if ((PINA & 0x01) == 0x01) {
+			if ((PINA & 0x03) == 0x02) {
 				State = Decrement;
 			}
-			else if ((PINA & 0x00) == 0x00) {
+			else if ((PINA & 0x03) == 0x01) {
 				State = Increment;
+			}
+			else if((PINA & 0x03) == 0x03) {
+				State = Reset;
 			}
 			break;
 			
 		case Decrement:
-			if (PORTC < 0) {
-				break;
-			}
-			PORTC -= 0x01;
-			if ((PINA & 0x01) == 0x01) {
+			if ((PINA & 0x03) == 0x02) {
 				State = Decrement;
 			}
-			else if ((PINA & 0x00) == 0x00) {
+			else if ((PINA & 0x03) == 0x01) {
 				State = Increment;
+			}
+			else if((PINA & 0x03) == 0x03) {
+				State = Reset;
 			}
 			break;
 			
@@ -55,12 +51,41 @@ void tick() {
 			if ((PINA & 0x03) == 0x03) {
 				State = Reset;
 			}
-			else if ((PINA & 0x01) == 0x01) {
+			else if ((PINA & 0x03) == 0x02) {
 				State = Decrement;
 			}
-			else if ((PINA & 0x00) == 0x00) {
+			else if ((PINA & 0x03) == 0x01) {
 				State = Increment;
 			}
+			break;
+			
+		default:
+			break;
+	}
+	
+	switch(State) {
+		case Init:
+			PORTC = 0x07;
+			break;
+			
+		case Increment: 
+			if (PORTC > 9) {
+				break;
+			}
+			PORTC += 1;
+			break;
+		
+		case Decrement:
+			if (PORTC <= 0) {
+				break;
+			}
+			PORTC -= 1;
+			break;
+			
+		case Reset:
+			PORTC = 0x00;
+			
+		default:
 			break;
 	}
 }
@@ -69,8 +94,8 @@ int main(void)
 {
    DDRA = 0x00; PORTA = 0xFF;
    DDRC = 0xFF; PORTC = 0x07;
-   unsigned char tmpC = 0x00;
-   
+   State = Init;
+
    while(1) {
 	   tick();
    }
