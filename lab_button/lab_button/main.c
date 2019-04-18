@@ -11,11 +11,10 @@
 int main(void)
 {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTC = 0x00;
+	DDRB = 0xFF; PORTB = 0x00;
 
 	unsigned char fuel_level = 0x00;
 	unsigned char temp_output = 0x00;
-	unsigned char seatbelt_light = 0x00;
 
 	while (1)
 	{
@@ -53,9 +52,9 @@ int main(void)
 			temp_output = 0x00;
 		}
 
-		seatbelt_light = (PINA & 0x70) == 0x30 ? 0x80 : 0x00;
 
-		PORTC = temp_output + seatbelt_light;
+		PORTB = ~temp_output;
+
 
 	}
 }
