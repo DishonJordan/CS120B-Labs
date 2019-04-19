@@ -24,7 +24,7 @@ int main(void)
 
 	while (1)
 	{
-		fuel_level = PINA & 0x0F;
+		fuel_level = ~PINA & 0x0F;
 
 		switch(fuel_level){
 			case 0x00:
