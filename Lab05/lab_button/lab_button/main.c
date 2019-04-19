@@ -21,6 +21,9 @@ int main(void)
 		fuel_level = PINA & 0x0F;
 
 		switch(fuel_level){
+			case 0x00:
+			temp_output = 0x40;
+			break;
 			case 0x01:
 			case 0x02:
 			temp_output = 0x60;
@@ -53,7 +56,7 @@ int main(void)
 		}
 
 
-		PORTB = ~temp_output;
+		PORTB = temp_output;
 
 
 	}
