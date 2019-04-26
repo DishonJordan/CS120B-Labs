@@ -90,7 +90,7 @@ void Tick_LightSM(){
 			LIGHT_STATE = a_input? WaitLightRelease : Light;
 			if(a_input){
 				LIGHT_STATE = WaitLightRelease;
-				if(temp_b = 0x02){
+				if(temp_b == 0x02){
 					score++;
 					}else if(score > 0 ){
 					score--;
@@ -135,7 +135,8 @@ void Tick_LightSM(){
 			temp_b = (temp_b == 0x04)? 0x01: temp_b << 1;
 		break;
 		case WaitLightRelease:
-			LCD_DisplayString(1, score);
+			LCD_ClearScreen();
+			LCD_WriteData(score + '0');
 		break;
 		case Win:
 			LCD_DisplayString(1, "Victory");
@@ -160,6 +161,7 @@ int main(void)
 	temp_b = 0x00; a_input = 0x00; timer = 0x00; score = 5;
 	LIGHT_STATE = Init;
 	LCD_init();
+	LCD_DisplayString(1, "5");
 
 	while (1)
 	{
