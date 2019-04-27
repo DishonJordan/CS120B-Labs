@@ -1,7 +1,7 @@
 /*	Partner 1 Name & E-mail: Dishon Jordan djord007@ucr.edu
 *	Partner 2 Name & E-mail: Travis Nasser tnass001@ucr.edu
 *	Lab Section: 025
-*	Assignment: Lab 5 Exercise 2
+*	Assignment: Lab 7 Exercise 1
 *	Exercise Description:
 *
 *	I acknowledge all content contained herein, excluding template or example
@@ -66,7 +66,6 @@ void TimerSet(unsigned long M) {
 	_avr_timer_M = M;
 	_avr_timer_cntcurr = _avr_timer_M;
 }
-
 
 enum States {init, wait, inc, dec, reset, incWait, decWait, resWait} state;
 unsigned char cValue = 0;
@@ -144,9 +143,9 @@ void tick() {
 	
 	switch(state) {
 		case init:
-		cValue = 0;
-		//LCD_ClearScreen();
-		LCD_WriteData(cValue + '0');
+			cValue = 0;
+			LCD_Cursor(1);
+			LCD_WriteData(cValue + '0');
 		break;
 		
 		case wait:
@@ -155,7 +154,7 @@ void tick() {
 		case inc:
 		if (cValue < 9) { 
 			cValue += 1; 
-		//	LCD_ClearScreen();
+			LCD_Cursor(1);
 			LCD_WriteData(cValue + '0');
 			}
 		break;
@@ -163,14 +162,14 @@ void tick() {
 		case dec:
 		if (cValue > 0) {
 			cValue -= 1; 
-		//	LCD_ClearScreen();
+			LCD_Cursor(1);
 			LCD_WriteData(cValue + '0');
 			}
 		break;
 		
 		case reset:
 			cValue = 0;
-		//	LCD_ClearScreen();
+			LCD_Cursor(1);
 			LCD_WriteData(cValue + '0');
 		break;
 		
@@ -194,9 +193,13 @@ int main(void)
 	DDRC = 0xFF; PORTC = 0x00; // LCD data lines
 	DDRD = 0xFF; PORTD = 0x00; // LCD control lines
 	
-	state = init;
+	TimerSet(1000);
+	TimerOn();
+	
 	LCD_init();
-
+	LCD_Cursor(1);
+	
+	state = init;
 	while(1) {
 		tick();
 		while(!TimerFlag)
