@@ -19,6 +19,7 @@ unsigned long _avr_timer_M = 1; // Start count from here, down to 0. Default 1 m
 unsigned long _avr_timer_cntcurr = 0; // Current internal count of 1ms ticks
 unsigned char blinkingLEDs = 0x00;
 unsigned char threeLEDs = 0x00;
+unsigned char b_out = 0x00;
 
 void TimerOn() {
 	// AVR timer/counter controller register TCCR1
@@ -124,6 +125,13 @@ void ThreeLED_Tick(){
 
 }
 
+void CombineLEDs_Tick(){
+
+	BlinkLED_Tick();
+	ThreeLED_Tick();
+	b_out =  blinkingLEDs | threeLEDs;
+
+}
 int main(void)
 {
 	DDRB = 0xFF; PORTB = 0x00;
@@ -137,9 +145,8 @@ int main(void)
 
     while (1) 
     {
-		BlinkLED_Tick();
-		ThreeLED_Tick();
-		PORTB = blinkingLEDs | threeLEDs;
+		CombineLEDs_Tick();
+		PORTB = b_out;
 		while(!TimerFlag);
 		TimerFlag = 0;
 		
