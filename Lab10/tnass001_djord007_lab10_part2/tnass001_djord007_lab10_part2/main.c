@@ -1,12 +1,9 @@
 /*	Partner 1 Name & E-mail: Dishon Jordan djord007@ucr.edu
 *	Partner 2 Name & E-mail: Travis Nasser tnass001@ucr.edu
 *	Lab Section: 025
-*	Assignment: Lab 10 Exercise 1
+*	Assignment: Lab 10 Exercise 2
 *	Exercise Description:
-*	Connect LEDs to PB0, PB1, PB2, and PB3. In one state machine (Three LEDs), output to a shared variable (threeLEDs) the following behavior: 
-*	set only bit 0 to 1, then only bit 1, then only bit 2 in sequence for 1 second each. In a second state machine (Blinking LED), output to a 
-*	shared variable (bilnkingLED) the following behavior: set bit 3 to 1 for 1 second, then 0 for 1 second. In a third state machine (Combine LEDs), 
-*	combine both shared variables and output to the PORTB. Note: only one SM is writing to outputs. Do this for the rest of the quarter.
+*	Modify the above example so the three LEDs light for 300 ms, while PB3's LED still blinks 1 second on and 1 second off.
 */
 
 #include <avr/io.h>
@@ -77,11 +74,11 @@ enum SM_ThreeLED{ThreeLED_ONE, ThreeLED_TWO, ThreeLED_THREE}THREE_STATE;
 
 void BlinkLED_Tick(){
 	switch(BLINK_STATE){
-		case BlinkLED_OFF: BLINK_STATE = BlinkLED_ON; 
+		case BlinkLED_OFF: BLINK_STATE = BlinkLED_ON;
 		break;
-		case BlinkLED_ON:  BLINK_STATE = BlinkLED_OFF; 
+		case BlinkLED_ON:  BLINK_STATE = BlinkLED_OFF;
 		break;
-		default: BLINK_STATE = BlinkLED_OFF; 
+		default: BLINK_STATE = BlinkLED_OFF;
 		break;
 	}
 	switch(BLINK_STATE){
@@ -96,31 +93,31 @@ void BlinkLED_Tick(){
 }
 void ThreeLED_Tick(){
 	switch(THREE_STATE){
-	case ThreeLED_ONE: 
+		case ThreeLED_ONE:
 		THREE_STATE = ThreeLED_TWO;
-	break;
-	case ThreeLED_TWO:
+		break;
+		case ThreeLED_TWO:
 		THREE_STATE = ThreeLED_THREE;
-	break;
-	case ThreeLED_THREE:
+		break;
+		case ThreeLED_THREE:
 		THREE_STATE = ThreeLED_ONE;
-	break;
-	default:
+		break;
+		default:
 		THREE_STATE = ThreeLED_ONE;
-	break;
+		break;
 	}
 	switch(THREE_STATE){
-	case ThreeLED_ONE:
+		case ThreeLED_ONE:
 		threeLEDs = 0x01;
-	break;
-	case ThreeLED_TWO:
+		break;
+		case ThreeLED_TWO:
 		threeLEDs = 0x02;
-	break;
-	case ThreeLED_THREE:
+		break;
+		case ThreeLED_THREE:
 		threeLEDs = 0x04;
-	break;
-	default:
-	break;
+		break;
+		default:
+		break;
 	}
 
 }
@@ -131,7 +128,7 @@ void CombineLEDs_Tick(){
 	if(count % 10 == 0){
 		BlinkLED_Tick();
 	}
-	if(count % 10 == 0)
+	if(count % 3 == 0)
 		ThreeLED_Tick();
 
 	count++;
@@ -149,13 +146,13 @@ int main(void)
 	BLINK_STATE = BlinkLED_OFF;
 	THREE_STATE = ThreeLED_ONE;
 
-    while (1) 
-    {
+	while (1)
+	{
 		CombineLEDs_Tick();
 		PORTB = b_out;
 		while(!TimerFlag);
 		TimerFlag = 0;
 		
-    }
+	}
 }
 
