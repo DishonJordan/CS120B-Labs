@@ -17,6 +17,7 @@ unsigned long _avr_timer_cntcurr = 0; // Current internal count of 1ms ticks
 unsigned char blinkingLEDs = 0x00;
 unsigned char threeLEDs = 0x00;
 unsigned char b_out = 0x00;
+unsigned char count;
 
 void TimerOn() {
 	// AVR timer/counter controller register TCCR1
@@ -121,8 +122,6 @@ void ThreeLED_Tick(){
 	}
 
 }
-unsigned char count;
-
 void CombineLEDs_Tick(){
 	
 	if(count % 10 == 0){
@@ -135,6 +134,7 @@ void CombineLEDs_Tick(){
 	b_out =  blinkingLEDs | threeLEDs;
 
 }
+
 int main(void)
 {
 	DDRB = 0xFF; PORTB = 0x00;
