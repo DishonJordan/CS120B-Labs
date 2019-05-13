@@ -82,10 +82,10 @@ void Tick(){
 			if(b_inc && b_dec){
 				STATE = Reset;
 			}else if(b_inc && ! b_dec){
-				b_out = ( b_out < 9)? b_out + 1: 9;
+				//b_out = ( b_out < 9)? b_out + 1: 9;
 				STATE = Inc;
 			}else if(!b_inc && b_dec){
-				b_out = ( b_out > 0)? b_out - 1: 0;
+				//b_out = ( b_out > 0)? b_out - 1: 0;
 				STATE = Dec;
 			}else{
 				STATE = Wait;
