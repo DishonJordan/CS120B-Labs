@@ -153,22 +153,18 @@ sound_Tick() {
 		case wait:
 			if (a2) {
 				soundState = play;
-				soundBuzzer = 0x08;
 			}
 			else {
 				soundState = wait;
-				soundBuzzer = 0x00;
 			}
 			break;
 			
 		case play:
 			if (a2) {
 				soundState = play;
-				soundBuzzer = 0x08;
 			}
 			else {
 				soundState = wait;
-				soundBuzzer = 0x00;
 			}
 			
 		default:
@@ -180,10 +176,11 @@ sound_Tick() {
 			break;
 			
 		case wait:
+			soundBuzzer = 0x00;
 			break;
 			
 		case play:
-			PORTB = soundBuzzer;
+			soundBuzzer = 0x10;
 			break;
 	
 		default:
@@ -197,7 +194,7 @@ int main(void)
 	DDRB = 0xFF; PORTB = 0x00;
 	DDRA = 0x00; PORTA = 0xFF;
 
-	TimerSet(100);
+	TimerSet(1);
 	TimerOn();
 	blinkingLEDs = 0x00;
 	threeLEDs = 0x00;
