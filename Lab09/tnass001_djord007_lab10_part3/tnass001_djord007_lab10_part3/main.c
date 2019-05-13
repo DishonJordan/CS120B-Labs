@@ -1,7 +1,7 @@
 /*	Partner 1 Name & E-mail: Dishon Jordan djord007@ucr.edu
 *	Partner 2 Name & E-mail: Travis Nasser tnass001@ucr.edu
 *	Lab Section: 025
-*	Assignment: Lab 10 Exercise 3
+*	Assignment: Lab 10 Exercise 
 *	Exercise Description:
 *	Modify the above example so the three LEDs light for 300 ms, while PB3's LED still blinks 1 second on and 1 second off.
 */
@@ -123,60 +123,26 @@ void ThreeLED_Tick(){
 
 }
 
+unsigned char a2, soundBuzzer;
+
 void CombineLEDs_Tick(){
-	
-	if(count % 10 == 0){
+
+	if(count % 1000 == 0){
 		BlinkLED_Tick();
 	}
-	if(count % 3 == 0)
-	ThreeLED_Tick();
+	if(count % 300 == 0)
+		ThreeLED_Tick();
+
+	if(count % 2 == 0)
+		sound_Tick();
 
 	count++;
-	b_out =  blinkingLEDs | threeLEDs;	
+	b_out =  blinkingLEDs | threeLEDs | soundBuzzer;
 
-}
-
-
-	
-void set_PWM(double frequency) {
-	static double current_frequency; // Keeps track of the currently set frequency
-	// Will only update the registers when the frequency changes, otherwise allows
-	// music to play uninterrupted.
-	if (frequency != current_frequency) {
-		if (!frequency) { TCCR3B &= 0x08; } //stops timer/counter
-		else { TCCR3B |= 0x03; } // resumes/continues timer/counter
-		
-		// prevents OCR3A from overflowing, using prescaler 64
-		// 0.954 is smallest frequency that will not result in overflow
-		if (frequency < 0.954) { OCR3A = 0xFFFF; }
-		
-		// prevents OCR3A from underflowing, using prescaler 64					// 31250 is largest frequency that will not result in underflow
-		else if (frequency > 31250) { OCR3A = 0x0000; }
-		
-		// set OCR3A based on desired frequency
-		else { OCR3A = (short)(8000000 / (128 * frequency)) - 1; }
-
-		TCNT3 = 0; // resets counter
-		current_frequency = frequency; // Updates the current frequency
-	}
-}
-
-void PWM_on() {
-	TCCR3A = (1 << COM3A0);
-	// COM3A0: Toggle PB6 on compare match between counter and OCR3A
-	TCCR3B = (1 << WGM32) | (1 << CS31) | (1 << CS30);
-	// WGM32: When counter (TCNT3) matches OCR3A, reset counter
-	// CS31 & CS30: Set a prescaler of 64
-	set_PWM(0);
-}
-
-void PWM_off() {
-	TCCR3A = 0x00;
-	TCCR3B = 0x00;
 }
 
 enum States{init, wait, play}soundState;
-unsigned char a2;
+
 
 sound_Tick() {
 	switch(soundState) {
@@ -187,19 +153,22 @@ sound_Tick() {
 		case wait:
 			if (a2) {
 				soundState = play;
-				PWM_on();
+				soundBuzzer = 0x08;
 			}
 			else {
 				soundState = wait;
+				soundBuzzer = 0x00;
 			}
 			break;
 			
 		case play:
 			if (a2) {
 				soundState = play;
+				soundBuzzer = 0x08;
 			}
 			else {
 				soundState = wait;
+				soundBuzzer = 0x00;
 			}
 			
 		default:
@@ -214,8 +183,8 @@ sound_Tick() {
 			break;
 			
 		case play:
-			set_PWM(261.63);
-			PORTB = 1;
+			PORTB = soundBuzzer;
+			break;
 	
 		default:
 			break;
@@ -239,7 +208,6 @@ int main(void)
 	while (1)
 	{
 		a2 = ~PINA & 0x04;
-		sound_Tick();
 		CombineLEDs_Tick();
 		PORTB = b_out;
 		while(!TimerFlag);
