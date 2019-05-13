@@ -166,6 +166,7 @@ sound_Tick() {
 			else {
 				soundState = wait;
 			}
+			break;
 			
 		default:
 			break;
