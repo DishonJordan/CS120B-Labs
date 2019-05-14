@@ -182,8 +182,8 @@ void PWM_off() {
 }
 
 
-enum States{init, wait, play}soundState;
-
+enum States{init, wait, play1, play2}soundState;
+unsigned char counter;
 
 sound_Tick() {
 	switch(soundState) {
@@ -193,18 +193,25 @@ sound_Tick() {
 			
 		case wait:
 			if (a2) {
-				soundState = play;
-				PWM_on();
+				soundState = play1;
 			}
 			else {
 				soundState = wait;
-				PWM_on();
 			}
 			break;
 			
-		case play:
+		case play1:
 			if (a2) {
-				soundState = play;
+				soundState = play2;
+			}
+			else {
+				soundState = wait;
+			}
+			break;
+			
+		case play2:
+			if (a2) {
+				soundState = play1;
 			}
 			else {
 				soundState = wait;
@@ -222,8 +229,18 @@ sound_Tick() {
 		case wait:
 			break;
 			
-		case play:
-			set_PWM(261.62);
+		case play1:
+			if (counter % 2 == 0)
+				PORTB = PORTB | 0x10;
+			else
+				PORTB = 0x00;
+			break;
+			
+		case play2:
+			if (counter % 2 == 0) 
+				PORTB = PORTB | 0x10;
+			else 
+				PORTB = 0x00;
 			break;
 	
 		default:
@@ -244,6 +261,7 @@ int main(void)
 	BLINK_STATE = BlinkLED_OFF;
 	THREE_STATE = ThreeLED_ONE;
 	soundState = init;
+	counter = 0;
 
 	while (1)
 	{
