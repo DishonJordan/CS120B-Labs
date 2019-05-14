@@ -234,6 +234,8 @@ sound_Tick() {
 				PORTB = PORTB | 0x10;
 			else
 				PORTB = 0x00;
+				
+			++counter;
 			break;
 			
 		case play2:
@@ -241,6 +243,7 @@ sound_Tick() {
 				PORTB = PORTB | 0x10;
 			else 
 				PORTB = 0x00;
+			++counter;
 			break;
 	
 		default:
