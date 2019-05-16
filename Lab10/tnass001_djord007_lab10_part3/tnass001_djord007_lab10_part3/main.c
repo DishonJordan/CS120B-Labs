@@ -127,13 +127,13 @@ unsigned char a2, soundBuzzer;
 
 void CombineLEDs_Tick(){
 
-	if(count % 1000 == 0){
+	if(count % 500 == 0){
 		BlinkLED_Tick();
 	}
-	if(count % 300 == 0)
+	if(count % 150 == 0)
 		ThreeLED_Tick();
 
-	if(count % 2 == 0)
+	if(count % 1 == 0)
 		sound_Tick();
 
 	count++;
