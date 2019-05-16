@@ -26,15 +26,25 @@ unsigned char GetKeypadKey() {
 	PORTC = 0xDF; // Enable col 5 with 0, disable others with 1’s
 	asm("nop"); // add a delay to allow PORTC to stabilize before checking
 	if (GetBit(PINC,0)==0) { return('2'); }
-	// ... *****FINISH*****
+	if (GetBit(PINC,1)==0) { return('5'); }
+	if (GetBit(PINC,2)==0) { return('8'); }
+	if (GetBit(PINC,3)==0) { return('0'); }
 
 	// Check keys in col 3
 	PORTC = 0xBF; // Enable col 6 with 0, disable others with 1’s
 	asm("nop"); // add a delay to allow PORTC to stabilize before checking
-	// ... *****FINISH*****
+	if (GetBit(PINC,0)==0) { return('3'); }
+	if (GetBit(PINC,1)==0) { return('6'); }
+	if (GetBit(PINC,2)==0) { return('9'); }
+	if (GetBit(PINC,3)==0) { return('#'); }
 
 	// Check keys in col 4	
-	// ... *****FINISH*****
+	PORTC = 0x7F;
+	asm("nop");
+	if (GetBit(PINC,0)==0) { return('A'); }
+	if (GetBit(PINC,1)==0) { return('B'); }
+	if (GetBit(PINC,2)==0) { return('C'); }
+	if (GetBit(PINC,3)==0) { return('D'); }
 
 	return('\0'); // default value
 
@@ -51,9 +61,16 @@ int main(void)
 			case '\0': PORTB = 0x1F; break; // All 5 LEDs on
 			case '1': PORTB = 0x01; break; // hex equivalent
 			case '2': PORTB = 0x02; break;
-
-			// . . . ***** FINISH *****
-
+			case '3': PORTB = 0x03; break;
+			case '4': PORTB = 0x04; break;
+			case '5': PORTB = 0x05; break;
+			case '6': PORTB = 0x06; break;
+			case '7': PORTB = 0x07; break;
+			case '8': PORTB = 0x08; break;
+			case '9': PORTB = 0x09; break;
+			case 'A': PORTB = 0x0A; break;
+			case 'B': PORTB = 0x0B; break;
+			case 'C': PORTB = 0x0C; break;
 			case 'D': PORTB = 0x0D; break;
 			case '*': PORTB = 0x0E; break;
 			case '0': PORTB = 0x00; break;
