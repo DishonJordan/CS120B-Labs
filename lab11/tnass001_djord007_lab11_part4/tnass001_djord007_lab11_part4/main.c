@@ -3,10 +3,11 @@
 *	Lab Section: 025
 *	Assignment: Lab 11 Exercise 4
 *	Exercise Description:
-*	Combine the functionality of the keypad and LCD so when keypad is pressed and released, 
-*	the character of the button pressed is displayed on the LCD, and stays displayed until 
-*	a different button press occurs (May be accomplished with two tasks: LCD interface & 
-*	modified test harness).
+*	Notice that you can visually see the LCD refresh each character 
+*	(display a lengthy string then update to a different lengthy string). 
+*	Design a system where a single character is updated in the displayed 
+*	string rather than the entire string itself. Use the functions 
+*	provided in “io.c”.
 */
 #include <avr/io.h>
 #include <avr/interrupt.h>
