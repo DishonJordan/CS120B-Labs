@@ -87,7 +87,7 @@ unsigned char pressed_char, curr_char,index;
 //--------User defined FSMs---------------------------------------------------
 //Enumeration of states.
 enum SM1_States { GetKey };
-enum SM2_States { Change };
+enum SM2_States { Change, Wait };
 
 // Monitors button connected to PA0. 
 // When button is pressed, shared variable "pause" is toggled.
@@ -114,19 +114,28 @@ int SMTick1(int state) {
 int SMTick2(int state){
 	switch(state){
 		case Change:
-			state = Change;
+			state = (pressed_char == '\0')? Change:Wait;
+			if(pressed_char == '\0'){
+				state = Change;
+			}else{
+				state = Wait;
+				LCD_Cursor(index);
+				LCD_WriteData(pressed_char);
+				index = (index == 16)? 1: index + 1;
+
+			}
+		case Wait:
+			state = (pressed_char == '\0')? Change:Wait;
+		break;
 		default:
 			state = Change;
 			break;
 	}
 	switch(state){
 		case Change:
-			if(pressed_char != '\0'){
-				LCD_Cursor(index);
-				LCD_WriteData(pressed_char);
-				curr_char = pressed_char;
-				index = (index == 16)? 0: index + 1;
-			}
+		break;
+		case  Wait:
+		break;
 		default:
 		break;
 	}
@@ -147,7 +156,7 @@ DDRC = 0xF0; PORTC = 0x0F;
 // . . . etc
 LCD_init();
 LCD_DisplayString(1, "Congratulations!");
-index = 0;
+index = 1;
 // Period for the tasks
 unsigned long int SMTick1_calc = 50;
 
